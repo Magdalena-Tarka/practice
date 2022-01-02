@@ -1,4 +1,4 @@
-import { IStoredCountries, ICountry } from "../interfaces";
+import { IStoredCountries, ICountry } from "../types/interfaces";
 import { getChangedPopulationCountries } from "../utils/index";
 import { getCountriesData } from "../api";
 import { sevenDaysInMsc } from "../config";

@@ -34,11 +34,11 @@ export const mockCountries1 = [
       b: ""
     },
     flag: "string",
-    regionalBlocs: {
+    regionalBlocs: [{
       acronym: "",
       name: "",
       otherNames: ["", ""]
-    },
+    }],
     cioc: "string",
     independent: true
   },
@@ -77,11 +77,11 @@ export const mockCountries1 = [
       b: ""
     },
     flag: "string",
-    regionalBlocs: {
+    regionalBlocs: [{
       acronym: "",
       name: "",
       otherNames: ["", ""]
-    },
+    }],
     cioc: "string",
     independent: true
   },
@@ -120,11 +120,11 @@ export const mockCountries1 = [
       b: ""
     },
     flag: "string",
-    regionalBlocs: {
+    regionalBlocs: [{
       acronym: "",
       name: "",
       otherNames: ["", ""]
-    },
+    }],
     cioc: "string",
     independent: true
   }
@@ -166,11 +166,11 @@ export const mockCountries2 = [
       b: ""
     },
     flag: "string",
-    regionalBlocs: {
+    regionalBlocs: [{
       acronym: "",
       name: "",
       otherNames: ["", ""]
-    },
+    }],
     cioc: "string",
     independent: true
   },
@@ -209,11 +209,11 @@ export const mockCountries2 = [
       b: ""
     },
     flag: "string",
-    regionalBlocs: {
+    regionalBlocs: [{
       acronym: "",
       name: "",
       otherNames: ["", ""]
-    },
+    }],
     cioc: "string",
     independent: true
   },
@@ -252,11 +252,11 @@ export const mockCountries2 = [
       b: ""
     },
     flag: "string",
-    regionalBlocs: {
+    regionalBlocs: [{
       acronym: "",
       name: "",
       otherNames: ["", ""]
-    },
+    }],
     cioc: "string",
     independent: true
   }

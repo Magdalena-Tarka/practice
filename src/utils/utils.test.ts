@@ -1,6 +1,6 @@
 import { mockCountries1, mockCountries2 } from "../mockData";
 import { getChangedPopulationCountries } from "./index";
-import { ICountry } from "../interfaces";
+import { ICountry } from "../types/interfaces";
 
 describe("Function getChangedPopulationCountries", () => {
   const changedData = (arr1: ICountry[], arr2: ICountry[]) => {

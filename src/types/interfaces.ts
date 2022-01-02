@@ -47,7 +47,7 @@ export interface ICountry {
   languages: object[];
   translations: ITranslations;
   flag: string;
-  regionalBlocs: IRegionalBlocs;
+  regionalBlocs: IRegionalBlocs[];
   cioc: string;
   independent: boolean;
 }

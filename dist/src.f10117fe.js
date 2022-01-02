@@ -117,23 +117,83 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"src/utils/index.ts":[function(require,module,exports) {
+})({"src/config.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getChangedPopulationCountries = void 0;
+exports.fiveHundredMillion = exports.sevenDaysInMsc = exports.url = void 0;
+exports.url = "https://restcountries.com/v2/all";
+exports.sevenDaysInMsc = 7 * 24 * 60 * 60 * 1000;
+exports.fiveHundredMillion = 500000000;
+},{}],"src/types/enums.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.SortDirection = void 0;
+var SortDirection;
+
+(function (SortDirection) {
+  SortDirection[SortDirection["descend"] = 0] = "descend";
+  SortDirection[SortDirection["ascend"] = 1] = "ascend";
+})(SortDirection = exports.SortDirection || (exports.SortDirection = {}));
+
+;
+},{}],"src/utils/index.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getContainingCharacter = exports.getByRegionalBlock = exports.getSorted = exports.compareAndPrintIfBigger = exports.sumFiveLargestPopulations = exports.getChangedPopulationCountries = void 0;
+
+const enums_1 = require("../types/enums");
 
 const getChangedPopulationCountries = (arr1, arr2) => {
   return arr1.filter(country1 => !arr2.some(country2 => country1.population === country2.population)).map(item => item.name).join(", ");
 };
 
 exports.getChangedPopulationCountries = getChangedPopulationCountries;
-/*export const getCountriesNames = (array: ICountry[]) => {
-  return array.map((item: ICountry) => item.name).join(", ");
-};*/
-},{}],"node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
+
+const sumFiveLargestPopulations = data => {
+  const fiveBiggestPopulation = data;
+  fiveBiggestPopulation.length = 5;
+  return fiveBiggestPopulation.reduce((prev, cur) => prev + cur.population, 0);
+};
+
+exports.sumFiveLargestPopulations = sumFiveLargestPopulations;
+
+const compareAndPrintIfBigger = (number1, number2) => {
+  let template = '';
+  number1 === number2 ? template = 'equal with' : number1 > number2 ? template = 'bigger than' : template = 'not bigger than';
+  return template;
+};
+
+exports.compareAndPrintIfBigger = compareAndPrintIfBigger;
+
+const getSorted = (data, keyToSort, direction) => {
+  return data.slice().sort((a, b) => {
+    return a[keyToSort] === b[keyToSort] ? 0 : a[keyToSort] > b[keyToSort] ? direction === enums_1.SortDirection.ascend ? 1 : -1 : direction === enums_1.SortDirection.ascend ? -1 : 1;
+  });
+};
+
+exports.getSorted = getSorted; // FILTERS
+
+const getByRegionalBlock = (data, regionalBlockName) => {
+  return data.filter(country => country.regionalBlocs).filter(item => item.regionalBlocs.some(item => item.name === regionalBlockName));
+};
+
+exports.getByRegionalBlock = getByRegionalBlock;
+
+const getContainingCharacter = (data, character) => {
+  return data.filter(item => !item.name.includes(character.toLowerCase() || character.toLocaleUpperCase()));
+};
+
+exports.getContainingCharacter = getContainingCharacter;
+},{"../types/enums":"src/types/enums.ts"}],"node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -2229,16 +2289,7 @@ module.exports.default = axios;
 
 },{"./utils":"node_modules/axios/lib/utils.js","./helpers/bind":"node_modules/axios/lib/helpers/bind.js","./core/Axios":"node_modules/axios/lib/core/Axios.js","./core/mergeConfig":"node_modules/axios/lib/core/mergeConfig.js","./defaults":"node_modules/axios/lib/defaults.js","./cancel/Cancel":"node_modules/axios/lib/cancel/Cancel.js","./cancel/CancelToken":"node_modules/axios/lib/cancel/CancelToken.js","./cancel/isCancel":"node_modules/axios/lib/cancel/isCancel.js","./env/data":"node_modules/axios/lib/env/data.js","./helpers/spread":"node_modules/axios/lib/helpers/spread.js","./helpers/isAxiosError":"node_modules/axios/lib/helpers/isAxiosError.js"}],"node_modules/axios/index.js":[function(require,module,exports) {
 module.exports = require('./lib/axios');
-},{"./lib/axios":"node_modules/axios/lib/axios.js"}],"src/config.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.sevenDaysInMsc = exports.url = void 0;
-exports.url = "https://restcountries.com/v2/all";
-exports.sevenDaysInMsc = 7 * 24 * 60 * 60 * 1000;
-},{}],"src/api.ts":[function(require,module,exports) {
+},{"./lib/axios":"node_modules/axios/lib/axios.js"}],"src/api.ts":[function(require,module,exports) {
 "use strict";
 
 var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
@@ -2378,19 +2429,74 @@ const handleData = storedCountries => __awaiter(void 0, void 0, void 0, function
 });
 
 exports.handleData = handleData;
-},{"../utils/index":"src/utils/index.ts","../api":"src/api.ts","../config":"src/config.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"../utils/index":"src/utils/index.ts","../api":"src/api.ts","../config":"src/config.ts"}],"src/getFilteredCountries/getFilteredCountries.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getFilteredCountries = void 0;
+
+const index_1 = require("../utils/index");
+
+const getFilteredCountries = data => {
+  const regionalBlock = 'European Union';
+  const character = 'a';
+  return (0, index_1.getContainingCharacter)((0, index_1.getByRegionalBlock)(data, regionalBlock), character);
+};
+
+exports.getFilteredCountries = getFilteredCountries;
+},{"../utils/index":"src/utils/index.ts"}],"src/getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getSumOfFiveLargestPopulations = void 0;
+
+const enums_1 = require("../types/enums");
+
+const getFilteredCountries_1 = require("../getFilteredCountries/getFilteredCountries");
+
+const index_1 = require("../utils/index");
+
+const getSumOfFiveLargestPopulations = storedCountries => {
+  const countries = storedCountries.data;
+  const sortKey = 'population';
+  return (0, index_1.sumFiveLargestPopulations)((0, index_1.getSorted)((0, getFilteredCountries_1.getFilteredCountries)(countries), sortKey, enums_1.SortDirection.descend));
+};
+
+exports.getSumOfFiveLargestPopulations = getSumOfFiveLargestPopulations;
+},{"../types/enums":"src/types/enums.ts","../getFilteredCountries/getFilteredCountries":"src/getFilteredCountries/getFilteredCountries.ts","../utils/index":"src/utils/index.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-const handleData_1 = require("./handleData/handleData"); //localStorage.clear();
+const config_1 = require("./config");
+
+const handleData_1 = require("./handleData/handleData");
+
+const getSumOfFiveLargestPopulations_1 = require("./getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations");
+
+const index_1 = require("./utils/index"); //localStorage.clear();
 
 
-const storedCountries = JSON.parse(localStorage.getItem("storedCountries") || "{}");
-(0, handleData_1.handleData)(storedCountries);
-},{"./handleData/handleData":"src/handleData/handleData.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+const app = () => {
+  // Init data - get the data from Local Storage, update the data in Local Storage if 7 days has been passed since the last update.
+  const storedCountries = JSON.parse(localStorage.getItem("storedCountries") || "{}");
+  (0, handleData_1.handleData)(storedCountries); // Get summary of 5 largest population of filtred (UE countries, name not included character A) countries. Compare it with 500 million.
+
+  const sumOfFiveLargestPopulation = (0, getSumOfFiveLargestPopulations_1.getSumOfFiveLargestPopulations)(storedCountries);
+  const template = (0, index_1.compareAndPrintIfBigger)(sumOfFiveLargestPopulation, config_1.fiveHundredMillion);
+  console.log(`Summary of the five largest population of filtered countries is ${sumOfFiveLargestPopulation}.`); // 44531245
+
+  console.log(`It's ${template} 500 million.`);
+};
+
+app();
+},{"./config":"src/config.ts","./handleData/handleData":"src/handleData/handleData.ts","./getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations":"src/getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations.ts","./utils/index":"src/utils/index.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2418,7 +2524,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52890" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52994" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
