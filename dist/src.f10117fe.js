@@ -133,7 +133,7 @@ exports.fiveHundredMillion = 500000000;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.SortDirection = void 0;
+exports.SortOption = exports.SortDirection = void 0;
 var SortDirection;
 
 (function (SortDirection) {
@@ -142,13 +142,21 @@ var SortDirection;
 })(SortDirection = exports.SortDirection || (exports.SortDirection = {}));
 
 ;
+var SortOption;
+
+(function (SortOption) {
+  SortOption[SortOption["including"] = 0] = "including";
+  SortOption[SortOption["notIncluding"] = 1] = "notIncluding";
+})(SortOption = exports.SortOption || (exports.SortOption = {}));
+
+;
 },{}],"src/utils/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getContainingCharacter = exports.getByRegionalBlock = exports.getSorted = exports.compareAndPrintIfBigger = exports.sumFiveLargestPopulations = exports.getChangedPopulationCountries = void 0;
+exports.getByIncludingCharacter = exports.getByRegionalBlock = exports.getSorted = exports.compareAndPrintIfBigger = exports.sumPopulation = exports.getChangedPopulationCountries = void 0;
 
 const enums_1 = require("../types/enums");
 
@@ -158,25 +166,37 @@ const getChangedPopulationCountries = (arr1, arr2) => {
 
 exports.getChangedPopulationCountries = getChangedPopulationCountries;
 
-const sumFiveLargestPopulations = data => {
-  const fiveBiggestPopulation = data;
-  fiveBiggestPopulation.length = 5;
-  return fiveBiggestPopulation.reduce((prev, cur) => prev + cur.population, 0);
+const sumPopulation = (data, quantityToSum) => {
+  if (quantityToSum) {
+    return data.slice(0, quantityToSum).reduce((prev, cur) => prev + cur.population, 0);
+  }
+
+  return data.reduce((prev, cur) => prev + cur.population, 0);
 };
 
-exports.sumFiveLargestPopulations = sumFiveLargestPopulations;
+exports.sumPopulation = sumPopulation;
 
 const compareAndPrintIfBigger = (number1, number2) => {
-  let template = '';
-  number1 === number2 ? template = 'equal with' : number1 > number2 ? template = 'bigger than' : template = 'not bigger than';
-  return template;
+  if (number1 === number2) {
+    return 'equal with';
+  }
+
+  return number1 > number2 ? 'bigger than' : 'not bigger than';
 };
 
 exports.compareAndPrintIfBigger = compareAndPrintIfBigger;
 
 const getSorted = (data, keyToSort, direction) => {
   return data.slice().sort((a, b) => {
-    return a[keyToSort] === b[keyToSort] ? 0 : a[keyToSort] > b[keyToSort] ? direction === enums_1.SortDirection.ascend ? 1 : -1 : direction === enums_1.SortDirection.ascend ? -1 : 1;
+    if (a[keyToSort] === b[keyToSort]) {
+      return 0;
+    }
+
+    if (direction === enums_1.SortDirection.ascend) {
+      return a[keyToSort] > b[keyToSort] ? 1 : -1;
+    }
+
+    return a[keyToSort] > b[keyToSort] ? -1 : 1;
   });
 };
 
@@ -188,11 +208,15 @@ const getByRegionalBlock = (data, regionalBlockName) => {
 
 exports.getByRegionalBlock = getByRegionalBlock;
 
-const getContainingCharacter = (data, character) => {
-  return data.filter(item => !item.name.includes(character.toLowerCase() || character.toLocaleUpperCase()));
+const getByIncludingCharacter = (data, option, character) => {
+  if (option === enums_1.SortOption.notIncluding) {
+    return data.filter(item => !item.name.includes(character.toLowerCase() || character.toUpperCase()));
+  }
+
+  return data.filter(item => item.name.includes(character.toLowerCase() || character.toUpperCase()));
 };
 
-exports.getContainingCharacter = getContainingCharacter;
+exports.getByIncludingCharacter = getByIncludingCharacter;
 },{"../types/enums":"src/types/enums.ts"}],"node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
 'use strict';
 
@@ -2437,16 +2461,18 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getFilteredCountries = void 0;
 
+const enums_1 = require("../types/enums");
+
 const index_1 = require("../utils/index");
 
 const getFilteredCountries = data => {
   const regionalBlock = 'European Union';
   const character = 'a';
-  return (0, index_1.getContainingCharacter)((0, index_1.getByRegionalBlock)(data, regionalBlock), character);
+  return (0, index_1.getByIncludingCharacter)((0, index_1.getByRegionalBlock)(data, regionalBlock), enums_1.SortOption.notIncluding, character);
 };
 
 exports.getFilteredCountries = getFilteredCountries;
-},{"../utils/index":"src/utils/index.ts"}],"src/getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations.ts":[function(require,module,exports) {
+},{"../types/enums":"src/types/enums.ts","../utils/index":"src/utils/index.ts"}],"src/getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2463,7 +2489,8 @@ const index_1 = require("../utils/index");
 const getSumOfFiveLargestPopulations = storedCountries => {
   const countries = storedCountries.data;
   const sortKey = 'population';
-  return (0, index_1.sumFiveLargestPopulations)((0, index_1.getSorted)((0, getFilteredCountries_1.getFilteredCountries)(countries), sortKey, enums_1.SortDirection.descend));
+  const countriesQuantity = 5;
+  return (0, index_1.sumPopulation)((0, index_1.getSorted)((0, getFilteredCountries_1.getFilteredCountries)(countries), sortKey, enums_1.SortDirection.descend), countriesQuantity);
 };
 
 exports.getSumOfFiveLargestPopulations = getSumOfFiveLargestPopulations;
@@ -2524,7 +2551,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52994" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61865" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
