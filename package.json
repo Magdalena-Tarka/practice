@@ -7,7 +7,8 @@
   "scripts": {
     "start": "parcel index.html --open",
     "build": "parcel build index.html",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "yarn test -o --watch"
   },
   "dependencies": {
     "@types/jest": "27.0.3",

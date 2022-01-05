@@ -167,11 +167,8 @@ const getChangedPopulationCountries = (arr1, arr2) => {
 exports.getChangedPopulationCountries = getChangedPopulationCountries;
 
 const sumPopulation = (data, quantityToSum) => {
-  if (quantityToSum) {
-    return data.slice(0, quantityToSum).reduce((prev, cur) => prev + cur.population, 0);
-  }
-
-  return data.reduce((prev, cur) => prev + cur.population, 0);
+  const slicedData = quantityToSum ? data.slice(0, quantityToSum) : data;
+  return slicedData.reduce((prev, cur) => prev + cur.population, 0);
 };
 
 exports.sumPopulation = sumPopulation;
@@ -2551,7 +2548,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61865" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61305" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

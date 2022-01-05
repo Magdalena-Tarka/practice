@@ -9,17 +9,15 @@ export const getChangedPopulationCountries = (arr1: ICountry[], arr2: ICountry[]
 };
 
 export const sumPopulation = (data: ICountry[], quantityToSum?: number) => {
-  if (quantityToSum) {
-    return data.slice(0, quantityToSum).reduce((prev, cur) => prev + cur.population, 0)
-  }
-  return data.reduce((prev, cur) => prev + cur.population, 0);
+  const slicedData = quantityToSum ? data.slice(0, quantityToSum) : data;
+  return slicedData.reduce((prev, cur) => prev + cur.population, 0);
 };
 
 export const compareAndPrintIfBigger = (number1: number, number2: number) => {
   if (number1 === number2) {
     return 'equal with';
   }
-  return (number1 > number2) ? 'bigger than' : 'not bigger than'
+  return (number1 > number2) ? 'bigger than' : 'not bigger than';
 };
 
 export const getSorted = (data: ICountry[], keyToSort: keyof ICountry, direction: SortDirection) => {

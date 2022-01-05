@@ -5,7 +5,7 @@ export const mockCountries1 = [
     alpha2Code: "string",
     alpha3Code: "string",
     callingCodes: ["", ""],
-    capital: "string",
+    capital: "Warsaw",
     altSpellings: ["", ""],
     subregion: "string",
     region: "string",
@@ -35,20 +35,20 @@ export const mockCountries1 = [
     },
     flag: "string",
     regionalBlocs: [{
-      acronym: "",
-      name: "",
+      acronym: "EU",
+      name: "European Union",
       otherNames: ["", ""]
     }],
     cioc: "string",
     independent: true
   },
   {
-    name: "France",
+    name: "Cyprus",
     topLevelDomain: ["", ""],
     alpha2Code: "string",
     alpha3Code: "string",
     callingCodes: ["", ""],
-    capital: "string",
+    capital: "Nicosia",
     altSpellings: ["", ""],
     subregion: "string",
     region: "string",
@@ -78,24 +78,24 @@ export const mockCountries1 = [
     },
     flag: "string",
     regionalBlocs: [{
-      acronym: "",
-      name: "",
+      acronym: "EU",
+      name: "European Union",
       otherNames: ["", ""]
     }],
     cioc: "string",
     independent: true
   },
   {
-    name: "England",
+    name: "Ghana",
     topLevelDomain: ["", ""],
     alpha2Code: "string",
     alpha3Code: "string",
     callingCodes: ["", ""],
-    capital: "string",
+    capital: "Accra",
     altSpellings: ["", ""],
     subregion: "string",
     region: "string",
-    population: 333,
+    population: 444,
     latlng: [1, 2, 3],
     demonym: "string",
     area: 1,
@@ -121,8 +121,8 @@ export const mockCountries1 = [
     },
     flag: "string",
     regionalBlocs: [{
-      acronym: "",
-      name: "",
+      acronym: "AU",
+      name: "African Union",
       otherNames: ["", ""]
     }],
     cioc: "string",
@@ -175,7 +175,7 @@ export const mockCountries2 = [
     independent: true
   },
   {
-    name: "France",
+    name: "Cyprus",
     topLevelDomain: ["", ""],
     alpha2Code: "string",
     alpha3Code: "string",
@@ -218,7 +218,7 @@ export const mockCountries2 = [
     independent: true
   },
   {
-    name: "England",
+    name: "Ghana",
     topLevelDomain: ["", ""],
     alpha2Code: "string",
     alpha3Code: "string",
@@ -227,7 +227,7 @@ export const mockCountries2 = [
     altSpellings: ["", ""],
     subregion: "string",
     region: "string",
-    population: 333,
+    population: 444,
     latlng: [1, 2, 3],
     demonym: "string",
     area: 1,
@@ -253,8 +253,8 @@ export const mockCountries2 = [
     },
     flag: "string",
     regionalBlocs: [{
-      acronym: "",
-      name: "",
+      acronym: "AU",
+      name: "African Union",
       otherNames: ["", ""]
     }],
     cioc: "string",
@@ -262,7 +262,7 @@ export const mockCountries2 = [
   }
 ];
 
-/*export const mockStoredData = {
-  data: mockArr1,
+export const mockStoredData = {
+  data: mockCountries1,
   timestamp: 1234
-};*/
+};
