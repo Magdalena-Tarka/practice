@@ -3,13 +3,13 @@ import { SortDirection, SortOption } from "../types/enums";
 
 export const getChangedPopulationCountries = (arr1: ICountry[], arr2: ICountry[]) => {
   return arr1
-    .filter((country1: ICountry) => !arr2.some((country2: ICountry) => country1.population === country2.population))
-    .map((item: ICountry) => item.name)
+    .filter((country1) => !arr2.some((country2) => country1.population === country2.population))
+    .map((item) => item.name)
     .join(", ");
 };
 
-export const sumPopulation = (data: ICountry[], quantityToSum?: number) => {
-  const slicedData = quantityToSum ? data.slice(0, quantityToSum) : data;
+export const sumPopulation = (countriesToSum: ICountry[], quantityToSum?: number) => {
+  const slicedData = quantityToSum ? countriesToSum.slice(0, quantityToSum) : countriesToSum;
   return slicedData.reduce((prev, cur) => prev + cur.population, 0);
 };
 
@@ -20,8 +20,8 @@ export const compareAndPrintIfBigger = (number1: number, number2: number) => {
   return (number1 > number2) ? 'bigger than' : 'not bigger than';
 };
 
-export const getSorted = (data: ICountry[], keyToSort: keyof ICountry, direction: SortDirection) => {
-  return data.slice().sort((a: ICountry, b: ICountry) => {
+export const getSorted = (countriesToSort: ICountry[], keyToSort: keyof ICountry, direction: SortDirection) => {
+  return countriesToSort.slice().sort((a, b) => {
     if (a[keyToSort] === b[keyToSort]) {
       return 0
     }
@@ -34,17 +34,17 @@ export const getSorted = (data: ICountry[], keyToSort: keyof ICountry, direction
 
 // FILTERS
 
-export const getByRegionalBlock = (data: ICountry[], regionalBlockName: string) => {
-  return data
+export const getByRegionalBlock = (countries: ICountry[], regionalBlockName: string) => {
+  return countries
     .filter(country => country.regionalBlocs)
     .filter(item => item.regionalBlocs
-      .some(item => item.name === regionalBlockName)
+      .some(element => element.name === regionalBlockName)
     );
 };
 
-export const getByIncludingCharacter = (data: ICountry[], option: SortOption, character: string) => {
-  if (option === SortOption.notIncluding) {
-    return data.filter(item => !item.name.includes(character.toLowerCase() || character.toUpperCase()));
+export const getByIncludingCharacter = (countryData: ICountry[], option: SortOption, character: string) => {
+  if (option === SortOption.excluding) {
+    return countryData.filter(item => !item.name.toLowerCase().includes(character.toLowerCase()));
   }
-  return data.filter(item => item.name.includes(character.toLowerCase() || character.toUpperCase()));
+  return countryData.filter(item => item.name.toLowerCase().includes(character.toLowerCase()));
 };

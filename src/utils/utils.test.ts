@@ -23,59 +23,64 @@ describe("Function getChangedPopulationCountries", () => {
   });
 });
 
-describe("Function getByRegionalBlock", () => {
-  const AUCountries = (array: ICountry[]) => getByRegionalBlock(array, 'African Union');
-  const expectedCountries = mockCountries1.filter(o => o.name === 'Ghana');
-
-  it("should return African Union countries", () => {
-    expect(AUCountries(mockCountries1)).toStrictEqual(expectedCountries);
-  });
-});
-
-describe("Function getByIncludingCharacter", () => {
-  const countriesIncludingL = (array: ICountry[]) => getByIncludingCharacter(array, SortOption.including, 'L');
-  const expectedCountries = mockCountries1.filter(o => o.name === 'Poland');
-
-  it("should return country names including character L", () => {
-    expect(countriesIncludingL(mockCountries1)).toStrictEqual(expectedCountries);
-  });
-});
-
-describe("Function getSorted", () => {
-  const countriesSorted = (array: ICountry[]) => getSorted(array, 'capital', SortDirection.ascend);
-  const expectedCountries = [mockCountries1[2], mockCountries1[1], mockCountries1[0]];
-
-  it("should return countries array sorted alphabetically by capital name", () => {
-    expect(countriesSorted(mockCountries1)).toStrictEqual(expectedCountries);
-  });
-});
-
-describe("Function compareAndPrintIfBigger", () => {
-  const printedIfBigger = (number1: number, number2: number) => compareAndPrintIfBigger(number1, number2);
-  const typeOfPrintedIfBigger = typeof printedIfBigger(999, 998);
-
-  it("should return string", () => {
-    expect(typeOfPrintedIfBigger).toBe('string');
-  });
-
-  it("should return 'bigger than'", () => {
-    expect(printedIfBigger(999, 998)).toBe('bigger than');
-  });
-
-  it("should return 'equal with'", () => {
-    expect(printedIfBigger(999, 999)).toBe('equal with');
-  });
-});
-
 describe("Function sumPopulation", () => {
-  const sumOfPopulation = (array: ICountry[]) => sumPopulation(array);
-  const typeOfsumOfPopulation = typeof sumOfPopulation(mockCountries1);
+  const sumOfPopulation = sumPopulation(mockCountries1);
+  const typeOfsumOfPopulation = typeof sumOfPopulation;
 
   it("should return number", () => {
     expect(typeOfsumOfPopulation).toBe('number');
   });
 
   it("should return 777", () => {
-    expect(sumOfPopulation(mockCountries1)).toBe(777);
+    expect(sumOfPopulation).toBe(777);
+  });
+});
+
+const checkResultOfComparedNumbers = ( number1: number, number2: number, expectedResult: string ) => {
+  it(`should return '${expectedResult}'`, () => {
+    expect(compareAndPrintIfBigger(number1, number2)).toBe(expectedResult);
+  });
+};
+
+describe("Function compareAndPrintIfBigger", () => {
+  checkResultOfComparedNumbers(999, 998, 'bigger than');
+  checkResultOfComparedNumbers(997, 998, 'not bigger than');
+  checkResultOfComparedNumbers(999, 999, 'equal with');
+});
+
+const checkSortedCountriesOrder = (keyToSort: keyof ICountry, direction: SortDirection, expectedResult: string) => {
+  it(`should return countries array sorted ${direction} by ${keyToSort}`, () => {
+    expect(getSorted(mockCountries1, keyToSort, direction)[0].name).toBe(expectedResult);
+  });
+};
+
+describe("Function getSorted", () => {
+  checkSortedCountriesOrder('capital', SortDirection.ascend, 'Ghana');
+  checkSortedCountriesOrder('capital', SortDirection.descend, 'Poland');
+  checkSortedCountriesOrder('area', SortDirection.ascend, 'Cyprus');
+  checkSortedCountriesOrder('area', SortDirection.descend, 'Poland');
+});
+
+describe("Function getByRegionalBlock", () => {
+  const AUCountries = (array: ICountry[]) => getByRegionalBlock(array, 'African Union');
+
+  it("should return African Union countries", () => {
+    expect(AUCountries(mockCountries1)
+      .every(country => country.regionalBlocs
+        .some(item => item.name === 'African Union')))
+    .toBe(true);
+  });
+});
+
+describe("Function getByIncludingCharacter", () => {
+  const countriesIncludingL = (array: ICountry[]) => getByIncludingCharacter(array, SortOption.including, 'l');
+  const countriesExcludingL = (array: ICountry[]) => getByIncludingCharacter(array, SortOption.excluding, 'l');
+
+  it("should return country names including character L", () => {
+    expect(countriesIncludingL(mockCountries1).every(country => country.name.includes('l'))).toBe(true);
+  });
+
+  it("should return country names excluding character L", () => {
+    expect(countriesExcludingL(mockCountries1).every(country => !country.name.includes('l'))).toBe(true);
   });
 });

@@ -103,6 +103,7 @@
   },
   "exclude": [
     "dist",
-    "babel.config.js"
+    "babel.config.js",
+    "coverage"
   ]
 }

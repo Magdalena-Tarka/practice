@@ -1,9 +1,9 @@
 export enum SortDirection {
-  'descend',
-  'ascend'
+  'descend' = 'descending',
+  'ascend' = 'ascending'
 };
 
 export enum SortOption {
   'including',
-  'notIncluding'
+  'excluding'
 };

@@ -137,8 +137,8 @@ exports.SortOption = exports.SortDirection = void 0;
 var SortDirection;
 
 (function (SortDirection) {
-  SortDirection[SortDirection["descend"] = 0] = "descend";
-  SortDirection[SortDirection["ascend"] = 1] = "ascend";
+  SortDirection["descend"] = "descending";
+  SortDirection["ascend"] = "ascending";
 })(SortDirection = exports.SortDirection || (exports.SortDirection = {}));
 
 ;
@@ -146,7 +146,7 @@ var SortOption;
 
 (function (SortOption) {
   SortOption[SortOption["including"] = 0] = "including";
-  SortOption[SortOption["notIncluding"] = 1] = "notIncluding";
+  SortOption[SortOption["excluding"] = 1] = "excluding";
 })(SortOption = exports.SortOption || (exports.SortOption = {}));
 
 ;
@@ -166,8 +166,8 @@ const getChangedPopulationCountries = (arr1, arr2) => {
 
 exports.getChangedPopulationCountries = getChangedPopulationCountries;
 
-const sumPopulation = (data, quantityToSum) => {
-  const slicedData = quantityToSum ? data.slice(0, quantityToSum) : data;
+const sumPopulation = (countriesToSum, quantityToSum) => {
+  const slicedData = quantityToSum ? countriesToSum.slice(0, quantityToSum) : countriesToSum;
   return slicedData.reduce((prev, cur) => prev + cur.population, 0);
 };
 
@@ -183,8 +183,8 @@ const compareAndPrintIfBigger = (number1, number2) => {
 
 exports.compareAndPrintIfBigger = compareAndPrintIfBigger;
 
-const getSorted = (data, keyToSort, direction) => {
-  return data.slice().sort((a, b) => {
+const getSorted = (countriesToSort, keyToSort, direction) => {
+  return countriesToSort.slice().sort((a, b) => {
     if (a[keyToSort] === b[keyToSort]) {
       return 0;
     }
@@ -199,18 +199,18 @@ const getSorted = (data, keyToSort, direction) => {
 
 exports.getSorted = getSorted; // FILTERS
 
-const getByRegionalBlock = (data, regionalBlockName) => {
-  return data.filter(country => country.regionalBlocs).filter(item => item.regionalBlocs.some(item => item.name === regionalBlockName));
+const getByRegionalBlock = (countries, regionalBlockName) => {
+  return countries.filter(country => country.regionalBlocs).filter(item => item.regionalBlocs.some(element => element.name === regionalBlockName));
 };
 
 exports.getByRegionalBlock = getByRegionalBlock;
 
-const getByIncludingCharacter = (data, option, character) => {
-  if (option === enums_1.SortOption.notIncluding) {
-    return data.filter(item => !item.name.includes(character.toLowerCase() || character.toUpperCase()));
+const getByIncludingCharacter = (countryData, option, character) => {
+  if (option === enums_1.SortOption.excluding) {
+    return countryData.filter(item => !item.name.toLowerCase().includes(character.toLowerCase()));
   }
 
-  return data.filter(item => item.name.includes(character.toLowerCase() || character.toUpperCase()));
+  return countryData.filter(item => item.name.toLowerCase().includes(character.toLowerCase()));
 };
 
 exports.getByIncludingCharacter = getByIncludingCharacter;
@@ -2462,10 +2462,10 @@ const enums_1 = require("../types/enums");
 
 const index_1 = require("../utils/index");
 
-const getFilteredCountries = data => {
+const getFilteredCountries = countriesToFilter => {
   const regionalBlock = 'European Union';
   const character = 'a';
-  return (0, index_1.getByIncludingCharacter)((0, index_1.getByRegionalBlock)(data, regionalBlock), enums_1.SortOption.notIncluding, character);
+  return (0, index_1.getByIncludingCharacter)((0, index_1.getByRegionalBlock)(countriesToFilter, regionalBlock), enums_1.SortOption.excluding, character);
 };
 
 exports.getFilteredCountries = getFilteredCountries;
@@ -2548,7 +2548,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61305" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50609" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
