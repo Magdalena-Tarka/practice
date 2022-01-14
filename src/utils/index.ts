@@ -1,4 +1,4 @@
-import { ICountry } from "../types/interfaces";
+import { ICountry, ICurrency } from "../types/interfaces";
 import { SortDirection, SortOption } from "../types/enums";
 
 export const getChangedPopulationCountries = (arr1: ICountry[], arr2: ICountry[]) => {
@@ -20,8 +20,8 @@ export const compareAndPrintIfBigger = (number1: number, number2: number) => {
   return (number1 > number2) ? 'bigger than' : 'not bigger than';
 };
 
-export const getSorted = (countriesToSort: ICountry[], keyToSort: keyof ICountry, direction: SortDirection) => {
-  return countriesToSort.slice().sort((a, b) => {
+export const getSortedByKey = (countriesToSort: ICountry[], keyToSort: string, direction: SortDirection) => {
+  return countriesToSort.slice().sort((a: any, b: any) => {
     if (a[keyToSort] === b[keyToSort]) {
       return 0
     }
@@ -32,19 +32,21 @@ export const getSorted = (countriesToSort: ICountry[], keyToSort: keyof ICountry
   });
 }
 
+export const getSortedValue = (arr: any, direction: SortDirection) => {
+  return arr.sort((a: any, b: any) => direction === SortDirection.ascend ? a.value - b.value : b.value - a.value);
+};
+
+export const getUniqueListBy = (collection: ICurrency[], keyToCompare: keyof ICurrency) => {
+  return [...new Map(collection.map((item: any) => [item[keyToCompare], item])).values()]
+}
+
 // FILTERS
 
 export const getByRegionalBlock = (countries: ICountry[], regionalBlockName: string) => {
-  return countries
-    .filter(country => country.regionalBlocs)
-    .filter(item => item.regionalBlocs
-      .some(element => element.name === regionalBlockName)
-    );
+  return countries.filter(country => country.regionalBlocs?.some(element => element.acronym === regionalBlockName));
 };
 
 export const getByIncludingCharacter = (countryData: ICountry[], option: SortOption, character: string) => {
-  if (option === SortOption.excluding) {
-    return countryData.filter(item => !item.name.toLowerCase().includes(character.toLowerCase()));
-  }
-  return countryData.filter(item => item.name.toLowerCase().includes(character.toLowerCase()));
+  const func = (country: ICountry) => country.name.toLowerCase().includes(character.toLowerCase())
+  return countryData.filter(item => option === SortOption.excluding ? !func(item) : func(item));
 };

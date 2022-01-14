@@ -117,17 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"src/config.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.fiveHundredMillion = exports.sevenDaysInMsc = exports.url = void 0;
-exports.url = "https://restcountries.com/v2/all";
-exports.sevenDaysInMsc = 7 * 24 * 60 * 60 * 1000;
-exports.fiveHundredMillion = 500000000;
-},{}],"src/types/enums.ts":[function(require,module,exports) {
+})({"src/types/enums.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -156,7 +146,7 @@ var SortOption;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getByIncludingCharacter = exports.getByRegionalBlock = exports.getSorted = exports.compareAndPrintIfBigger = exports.sumPopulation = exports.getChangedPopulationCountries = void 0;
+exports.getByIncludingCharacter = exports.getByRegionalBlock = exports.getUniqueListBy = exports.getSortedValue = exports.getSortedByKey = exports.compareAndPrintIfBigger = exports.sumPopulation = exports.getChangedPopulationCountries = void 0;
 
 const enums_1 = require("../types/enums");
 
@@ -183,7 +173,7 @@ const compareAndPrintIfBigger = (number1, number2) => {
 
 exports.compareAndPrintIfBigger = compareAndPrintIfBigger;
 
-const getSorted = (countriesToSort, keyToSort, direction) => {
+const getSortedByKey = (countriesToSort, keyToSort, direction) => {
   return countriesToSort.slice().sort((a, b) => {
     if (a[keyToSort] === b[keyToSort]) {
       return 0;
@@ -197,20 +187,34 @@ const getSorted = (countriesToSort, keyToSort, direction) => {
   });
 };
 
-exports.getSorted = getSorted; // FILTERS
+exports.getSortedByKey = getSortedByKey;
+
+const getSortedValue = (arr, direction) => {
+  return arr.sort((a, b) => direction === enums_1.SortDirection.ascend ? a.value - b.value : b.value - a.value);
+};
+
+exports.getSortedValue = getSortedValue;
+
+const getUniqueListBy = (collection, keyToCompare) => {
+  return [...new Map(collection.map(item => [item[keyToCompare], item])).values()];
+};
+
+exports.getUniqueListBy = getUniqueListBy; // FILTERS
 
 const getByRegionalBlock = (countries, regionalBlockName) => {
-  return countries.filter(country => country.regionalBlocs).filter(item => item.regionalBlocs.some(element => element.name === regionalBlockName));
+  return countries.filter(country => {
+    var _a;
+
+    return (_a = country.regionalBlocs) === null || _a === void 0 ? void 0 : _a.some(element => element.acronym === regionalBlockName);
+  });
 };
 
 exports.getByRegionalBlock = getByRegionalBlock;
 
 const getByIncludingCharacter = (countryData, option, character) => {
-  if (option === enums_1.SortOption.excluding) {
-    return countryData.filter(item => !item.name.toLowerCase().includes(character.toLowerCase()));
-  }
+  const func = country => country.name.toLowerCase().includes(character.toLowerCase());
 
-  return countryData.filter(item => item.name.toLowerCase().includes(character.toLowerCase()));
+  return countryData.filter(item => option === enums_1.SortOption.excluding ? !func(item) : func(item));
 };
 
 exports.getByIncludingCharacter = getByIncludingCharacter;
@@ -2310,7 +2314,19 @@ module.exports.default = axios;
 
 },{"./utils":"node_modules/axios/lib/utils.js","./helpers/bind":"node_modules/axios/lib/helpers/bind.js","./core/Axios":"node_modules/axios/lib/core/Axios.js","./core/mergeConfig":"node_modules/axios/lib/core/mergeConfig.js","./defaults":"node_modules/axios/lib/defaults.js","./cancel/Cancel":"node_modules/axios/lib/cancel/Cancel.js","./cancel/CancelToken":"node_modules/axios/lib/cancel/CancelToken.js","./cancel/isCancel":"node_modules/axios/lib/cancel/isCancel.js","./env/data":"node_modules/axios/lib/env/data.js","./helpers/spread":"node_modules/axios/lib/helpers/spread.js","./helpers/isAxiosError":"node_modules/axios/lib/helpers/isAxiosError.js"}],"node_modules/axios/index.js":[function(require,module,exports) {
 module.exports = require('./lib/axios');
-},{"./lib/axios":"node_modules/axios/lib/axios.js"}],"src/api.ts":[function(require,module,exports) {
+},{"./lib/axios":"node_modules/axios/lib/axios.js"}],"src/config.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.keysToGetStatsBy = exports.blocksToGetStatsBy = exports.fiveHundredMillion = exports.sevenDaysInMsc = exports.url = void 0;
+exports.url = "https://restcountries.com/v2/all";
+exports.sevenDaysInMsc = 7 * 24 * 60 * 60 * 1000;
+exports.fiveHundredMillion = 500000000;
+exports.blocksToGetStatsBy = ['EU', 'AU', 'NAFTA'];
+exports.keysToGetStatsBy = [...exports.blocksToGetStatsBy, 'other'];
+},{}],"src/api.ts":[function(require,module,exports) {
 "use strict";
 
 var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
@@ -2463,7 +2479,7 @@ const enums_1 = require("../types/enums");
 const index_1 = require("../utils/index");
 
 const getFilteredCountries = countriesToFilter => {
-  const regionalBlock = 'European Union';
+  const regionalBlock = 'EU';
   const character = 'a';
   return (0, index_1.getByIncludingCharacter)((0, index_1.getByRegionalBlock)(countriesToFilter, regionalBlock), enums_1.SortOption.excluding, character);
 };
@@ -2487,40 +2503,232 @@ const getSumOfFiveLargestPopulations = storedCountries => {
   const countries = storedCountries.data;
   const sortKey = 'population';
   const countriesQuantity = 5;
-  return (0, index_1.sumPopulation)((0, index_1.getSorted)((0, getFilteredCountries_1.getFilteredCountries)(countries), sortKey, enums_1.SortDirection.descend), countriesQuantity);
+  return (0, index_1.sumPopulation)((0, index_1.getSortedByKey)((0, getFilteredCountries_1.getFilteredCountries)(countries), sortKey, enums_1.SortDirection.descend), countriesQuantity);
 };
 
 exports.getSumOfFiveLargestPopulations = getSumOfFiveLargestPopulations;
-},{"../types/enums":"src/types/enums.ts","../getFilteredCountries/getFilteredCountries":"src/getFilteredCountries/getFilteredCountries.ts","../utils/index":"src/utils/index.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"../types/enums":"src/types/enums.ts","../getFilteredCountries/getFilteredCountries":"src/getFilteredCountries/getFilteredCountries.ts","../utils/index":"src/utils/index.ts"}],"src/segregateIntoStatsSchema/segregateIntoStatsSchema.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.segregateIntoStatsSchema = void 0;
+
+const index_1 = require("../utils/index");
+
+const segregateIntoStatsSchema = (collection, statsSchema, keyToSegregate) => {
+  const currenciesArray = [];
+  const countryPath = statsSchema[keyToSegregate];
+  collection.forEach(country => {
+    countryPath.countries.sort((a, b) => b.localeCompare(a)).push(country.nativeName);
+    countryPath.population += country.population;
+    if (country.area) countryPath.area += country.area;
+    if (country.currencies) currenciesArray.push(...country.currencies);
+    country.languages.forEach(language => {
+      const languageISO1 = language.iso639_1;
+      const languagePath = countryPath.languages[languageISO1];
+
+      if (languageISO1) {
+        if (!countryPath.languages.hasOwnProperty(languageISO1)) {
+          countryPath.languages[languageISO1] = {
+            countries: [country.alpha3Code],
+            population: country.population ? country.population : 0,
+            area: country.area ? country.area : 0,
+            name: language.nativeName
+          };
+        } else {
+          languagePath.countries.push(country.alpha3Code);
+          if (country.population) languagePath.population += country.population;
+          if (country.area) languagePath.area += country.area;
+          languagePath.name = language.nativeName;
+        }
+      }
+    });
+  });
+  const uniqueCurrencies = (0, index_1.getUniqueListBy)(currenciesArray, 'code');
+  countryPath.currencies.push(...uniqueCurrencies);
+};
+
+exports.segregateIntoStatsSchema = segregateIntoStatsSchema;
+},{"../utils/index":"src/utils/index.ts"}],"src/segregateByBlockIntoStats/segregateByBlockIntoStats.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.segregateByBlockIntoStats = void 0;
+
+const index_1 = require("../utils/index");
+
+const segregateIntoStatsSchema_1 = require("../segregateIntoStatsSchema/segregateIntoStatsSchema");
+
+const config_1 = require("../config");
+
+const segregateByBlockIntoStats = (countryData, statsSchema, keyToSegregate) => {
+  const countriesByBlock = (0, index_1.getByRegionalBlock)(countryData, keyToSegregate);
+  const otherCountries = countryData.filter(country => {
+    var _a;
+
+    return (_a = country.regionalBlocs) === null || _a === void 0 ? void 0 : _a.some(block => !config_1.blocksToGetStatsBy.includes(block.acronym));
+  }).concat(countryData.filter(item => item.regionalBlocs === undefined));
+  if (keyToSegregate === 'other') return (0, segregateIntoStatsSchema_1.segregateIntoStatsSchema)(otherCountries, statsSchema, 'other');
+  return (0, segregateIntoStatsSchema_1.segregateIntoStatsSchema)(countriesByBlock, statsSchema, keyToSegregate);
+};
+
+exports.segregateByBlockIntoStats = segregateByBlockIntoStats;
+},{"../utils/index":"src/utils/index.ts","../segregateIntoStatsSchema/segregateIntoStatsSchema":"src/segregateIntoStatsSchema/segregateIntoStatsSchema.ts","../config":"src/config.ts"}],"src/getCountryStats/getCountryStats.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getCountryStats = void 0;
+
+const segregateByBlockIntoStats_1 = require("../segregateByBlockIntoStats/segregateByBlockIntoStats");
+
+const config_1 = require("../config");
+
+const getCountryStats = storedCountries => {
+  const countryCollection = storedCountries.data;
+  const countryStats = {};
+  config_1.keysToGetStatsBy.forEach(key => countryStats[key] = {
+    countries: [],
+    population: 0,
+    languages: {},
+    currencies: [],
+    area: 0
+  });
+  config_1.keysToGetStatsBy.forEach(key => (0, segregateByBlockIntoStats_1.segregateByBlockIntoStats)(countryCollection, countryStats, key));
+  return countryStats;
+};
+
+exports.getCountryStats = getCountryStats;
+},{"../segregateByBlockIntoStats/segregateByBlockIntoStats":"src/segregateByBlockIntoStats/segregateByBlockIntoStats.ts","../config":"src/config.ts"}],"src/getOrganization/getOrganization.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getOrganization = void 0;
+
+const utils_1 = require("../utils");
+
+const getOrganization = (countryStats, keyToSortOrg, direction, position) => {
+  const orgsToSort = [];
+  Object.keys(countryStats).forEach(key => {
+    if (key !== 'other') {
+      const sortedElement = countryStats[key][keyToSortOrg];
+
+      const getSortedElemValue = () => {
+        if (typeof sortedElement === 'object') return Object.keys(sortedElement).length;
+        if (Array.isArray(sortedElement)) return sortedElement.length;
+        return sortedElement;
+      };
+
+      orgsToSort.push({
+        orgName: key,
+        value: getSortedElemValue()
+      });
+    }
+  });
+  return (0, utils_1.getSortedValue)(orgsToSort, direction)[position - 1].orgName;
+};
+
+exports.getOrganization = getOrganization;
+},{"../utils":"src/utils/index.ts"}],"src/getLanguageName/getLanguageName.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getLanguageName = void 0;
+
+const utils_1 = require("../utils");
+
+const getLanguageName = (countryStats, keyToSortLang, direction, position) => {
+  const languagesToSort = [];
+  Object.keys(countryStats).forEach(orgKey => {
+    Object.keys(countryStats[orgKey].languages).forEach(langKey => {
+      const sortedItem = countryStats[orgKey].languages[langKey][keyToSortLang];
+      const sortedItemValue = Array.isArray(sortedItem) ? sortedItem.length : sortedItem;
+
+      if (!languagesToSort.some(langItem => langItem.langISO === langKey)) {
+        languagesToSort.push({
+          langISO: langKey,
+          langNativeName: countryStats[orgKey].languages[langKey].name,
+          value: sortedItemValue
+        });
+      } else languagesToSort.map(lang => lang.langISO === langKey && (lang['value'] += sortedItemValue));
+    });
+  });
+  return (0, utils_1.getSortedValue)(languagesToSort, direction)[position - 1].langNativeName;
+};
+
+exports.getLanguageName = getLanguageName;
+},{"../utils":"src/utils/index.ts"}],"src/printInfoWithStats/printInfoWithStats.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.printInfoWithStats = void 0;
+
+const enums_1 = require("../types/enums");
+
+const config_1 = require("../config");
+
+const index_1 = require("../utils/index");
+
+const getSumOfFiveLargestPopulations_1 = require("../getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations");
+
+const getCountryStats_1 = require("../getCountryStats/getCountryStats");
+
+const getOrganization_1 = require("../getOrganization/getOrganization");
+
+const getLanguageName_1 = require("../getLanguageName/getLanguageName");
+
+const printInfoWithStats = storedCountries => {
+  // Get summary of 5 largest population of filtred (UE countries, name not included character A) countries. Compare it with 500 million.
+  const sumOfFiveLargestPopulation = (0, getSumOfFiveLargestPopulations_1.getSumOfFiveLargestPopulations)(storedCountries);
+  const template = (0, index_1.compareAndPrintIfBigger)(sumOfFiveLargestPopulation, config_1.fiveHundredMillion);
+  console.log(`Summary of the five largest population of filtered countries is ${sumOfFiveLargestPopulation}.`, // 44531245
+  `It's ${template} 500 million.`); // Segregate countries into statistics schema.
+
+  const countryStats = (0, getCountryStats_1.getCountryStats)(storedCountries);
+  console.log(`1. Organization with the highest population is: `, `${(0, getOrganization_1.getOrganization)(countryStats, 'population', enums_1.SortDirection.descend, 1)}.`);
+  console.log(`2. Organization with second highest population density is: `, `${(0, getOrganization_1.getOrganization)(countryStats, 'population', enums_1.SortDirection.descend, 2)}.`);
+  console.log(`3. Organization occupying the third largest area is: `, `${(0, getOrganization_1.getOrganization)(countryStats, 'area', enums_1.SortDirection.descend, 3)}.`);
+  console.log(`4. Organization with the largest number of languages assigned to them is: `, `${(0, getOrganization_1.getOrganization)(countryStats, 'languages', enums_1.SortDirection.descend, 1)},`, `but with the smallest is: ${(0, getOrganization_1.getOrganization)(countryStats, 'languages', enums_1.SortDirection.ascend, 1)}.`);
+  console.log(`5. Organization using the lagest number of currencies is: `, `${(0, getOrganization_1.getOrganization)(countryStats, 'currencies', enums_1.SortDirection.descend, 1)}.`);
+  console.log(`6. Organization with the smallest number of its members is: `, `${(0, getOrganization_1.getOrganization)(countryStats, 'countries', enums_1.SortDirection.ascend, 1)}.`);
+  console.log(`7. Native name of the language used in the largest number of countries is: `, `${(0, getLanguageName_1.getLanguageName)(countryStats, 'countries', enums_1.SortDirection.descend, 1)}.`);
+  console.log(`8. Native name of the language used in the smallest number of people is: `, `${(0, getLanguageName_1.getLanguageName)(countryStats, 'population', enums_1.SortDirection.ascend, 1)}.`);
+  console.log(`9. Native name of language used in the largest area is: `, `${(0, getLanguageName_1.getLanguageName)(countryStats, 'area', enums_1.SortDirection.descend, 1)},`, `but in the smallest area is: ${(0, getLanguageName_1.getLanguageName)(countryStats, 'area', enums_1.SortDirection.ascend, 1)}.`);
+};
+
+exports.printInfoWithStats = printInfoWithStats;
+},{"../types/enums":"src/types/enums.ts","../config":"src/config.ts","../utils/index":"src/utils/index.ts","../getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations":"src/getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations.ts","../getCountryStats/getCountryStats":"src/getCountryStats/getCountryStats.ts","../getOrganization/getOrganization":"src/getOrganization/getOrganization.ts","../getLanguageName/getLanguageName":"src/getLanguageName/getLanguageName.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-const config_1 = require("./config");
-
 const handleData_1 = require("./handleData/handleData");
 
-const getSumOfFiveLargestPopulations_1 = require("./getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations");
-
-const index_1 = require("./utils/index"); //localStorage.clear();
-
+const printInfoWithStats_1 = require("./printInfoWithStats/printInfoWithStats");
 
 const app = () => {
   // Init data - get the data from Local Storage, update the data in Local Storage if 7 days has been passed since the last update.
   const storedCountries = JSON.parse(localStorage.getItem("storedCountries") || "{}");
-  (0, handleData_1.handleData)(storedCountries); // Get summary of 5 largest population of filtred (UE countries, name not included character A) countries. Compare it with 500 million.
+  (0, handleData_1.handleData)(storedCountries); // Prit statistics.
 
-  const sumOfFiveLargestPopulation = (0, getSumOfFiveLargestPopulations_1.getSumOfFiveLargestPopulations)(storedCountries);
-  const template = (0, index_1.compareAndPrintIfBigger)(sumOfFiveLargestPopulation, config_1.fiveHundredMillion);
-  console.log(`Summary of the five largest population of filtered countries is ${sumOfFiveLargestPopulation}.`); // 44531245
-
-  console.log(`It's ${template} 500 million.`);
+  (0, printInfoWithStats_1.printInfoWithStats)(storedCountries);
 };
 
 app();
-},{"./config":"src/config.ts","./handleData/handleData":"src/handleData/handleData.ts","./getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations":"src/getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations.ts","./utils/index":"src/utils/index.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./handleData/handleData":"src/handleData/handleData.ts","./printInfoWithStats/printInfoWithStats":"src/printInfoWithStats/printInfoWithStats.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2548,7 +2756,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50609" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61637" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

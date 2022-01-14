@@ -1,9 +1,6 @@
 import { IStoredCountries } from "./types/interfaces";
-import { fiveHundredMillion } from "./config";
 import { handleData } from "./handleData/handleData";
-import { getSumOfFiveLargestPopulations } from "./getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations";
-import { compareAndPrintIfBigger } from './utils/index';
-//localStorage.clear();
+import { printInfoWithStats } from "./printInfoWithStats/printInfoWithStats";
 
 const app = () => {
 
@@ -15,13 +12,9 @@ const app = () => {
 
   handleData(storedCountries);
 
-  // Get summary of 5 largest population of filtred (UE countries, name not included character A) countries. Compare it with 500 million.
+  // Prit statistics.
 
-  const sumOfFiveLargestPopulation = getSumOfFiveLargestPopulations(storedCountries);
-  const template = compareAndPrintIfBigger(sumOfFiveLargestPopulation, fiveHundredMillion);
-
-  console.log(`Summary of the five largest population of filtered countries is ${sumOfFiveLargestPopulation}.`);  // 44531245
-  console.log(`It's ${template} 500 million.`)
+  printInfoWithStats(storedCountries);
 };
 
 app();

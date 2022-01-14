@@ -3,7 +3,7 @@ import { SortOption } from "../types/enums";
 import { getByRegionalBlock, getByIncludingCharacter } from "../utils/index";
 
 export const getFilteredCountries = (countriesToFilter: ICountry[]) => {
-  const regionalBlock = 'European Union';
+  const regionalBlock = 'EU';
   const character = 'a';
   return getByIncludingCharacter(getByRegionalBlock(countriesToFilter, regionalBlock), SortOption.excluding, character);
 };

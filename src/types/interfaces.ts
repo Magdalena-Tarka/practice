@@ -8,10 +8,17 @@ interface IFlags {
   png: string;
 }
 
-interface ICurrencies {
+export interface ICurrency {
   code: string;
   name: string;
   symbol: string;
+}
+
+interface ILanguage {
+  iso639_1: string,
+  iso639_2: string,
+  name: string,
+  nativeName: string
 }
 
 interface ITranslations {
@@ -43,11 +50,48 @@ export interface ICountry {
   nativeName: string;
   numericCode: string;
   flags: IFlags;
-  currencies: ICurrencies[];
-  languages: object[];
+  currencies: ICurrency[];
+  languages: ILanguage[];
   translations: ITranslations;
   flag: string;
   regionalBlocs: IRegionalBlocs[];
   cioc: string;
   independent: boolean;
+}
+
+export interface ILanguageStatsShort {
+  countries: string[],
+  population: number,
+  area: number,
+}
+
+export interface ILanguageStatsSchema extends ILanguageStatsShort {
+  name: string
+}
+
+interface ILanguageStatsObject {
+  [x: string]: ILanguageStatsSchema
+}
+
+export interface IOrgStatsSchema {
+  countries: string[],
+  population: number,
+  languages: ILanguageStatsObject,
+  currencies: ICurrency[],
+  area: number
+}
+
+export interface ICountryStats {
+  [x: string]: IOrgStatsSchema,
+}
+
+export interface IOrgToSort {
+  orgName: string,
+  value: number
+}
+
+export interface IlanguageToSort {
+  langISO: string,
+  langNativeName: string,
+  value: number
 }
