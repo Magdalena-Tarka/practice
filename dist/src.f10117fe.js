@@ -212,9 +212,9 @@ const getByRegionalBlock = (countries, regionalBlockName) => {
 exports.getByRegionalBlock = getByRegionalBlock;
 
 const getByIncludingCharacter = (countryData, option, character) => {
-  const func = country => country.name.toLowerCase().includes(character.toLowerCase());
+  const filterData = country => country.name.toLowerCase().includes(character.toLowerCase());
 
-  return countryData.filter(item => option === enums_1.SortOption.excluding ? !func(item) : func(item));
+  return countryData.filter(item => option === enums_1.SortOption.excluding ? !filterData(item) : filterData(item));
 };
 
 exports.getByIncludingCharacter = getByIncludingCharacter;
@@ -2604,17 +2604,17 @@ const getCountryStats = storedCountries => {
 };
 
 exports.getCountryStats = getCountryStats;
-},{"../segregateByBlockIntoStats/segregateByBlockIntoStats":"src/segregateByBlockIntoStats/segregateByBlockIntoStats.ts","../config":"src/config.ts"}],"src/getOrganization/getOrganization.ts":[function(require,module,exports) {
+},{"../segregateByBlockIntoStats/segregateByBlockIntoStats":"src/segregateByBlockIntoStats/segregateByBlockIntoStats.ts","../config":"src/config.ts"}],"src/getOrganizationName/getOrganizationName.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getOrganization = void 0;
+exports.getOrganizationName = void 0;
 
 const utils_1 = require("../utils");
 
-const getOrganization = (countryStats, keyToSortOrg, direction, position) => {
+const getOrganizationName = (countryStats, keyToSortOrg, direction, position) => {
   const orgsToSort = [];
   Object.keys(countryStats).forEach(key => {
     if (key !== 'other') {
@@ -2635,7 +2635,7 @@ const getOrganization = (countryStats, keyToSortOrg, direction, position) => {
   return (0, utils_1.getSortedValue)(orgsToSort, direction)[position - 1].orgName;
 };
 
-exports.getOrganization = getOrganization;
+exports.getOrganizationName = getOrganizationName;
 },{"../utils":"src/utils/index.ts"}],"src/getLanguageName/getLanguageName.ts":[function(require,module,exports) {
 "use strict";
 
@@ -2684,7 +2684,7 @@ const getSumOfFiveLargestPopulations_1 = require("../getSumOfFiveLargestPopulati
 
 const getCountryStats_1 = require("../getCountryStats/getCountryStats");
 
-const getOrganization_1 = require("../getOrganization/getOrganization");
+const getOrganizationName_1 = require("../getOrganizationName/getOrganizationName");
 
 const getLanguageName_1 = require("../getLanguageName/getLanguageName");
 
@@ -2696,19 +2696,19 @@ const printInfoWithStats = storedCountries => {
   `It's ${template} 500 million.`); // Segregate countries into statistics schema.
 
   const countryStats = (0, getCountryStats_1.getCountryStats)(storedCountries);
-  console.log(`1. Organization with the highest population is: `, `${(0, getOrganization_1.getOrganization)(countryStats, 'population', enums_1.SortDirection.descend, 1)}.`);
-  console.log(`2. Organization with second highest population density is: `, `${(0, getOrganization_1.getOrganization)(countryStats, 'population', enums_1.SortDirection.descend, 2)}.`);
-  console.log(`3. Organization occupying the third largest area is: `, `${(0, getOrganization_1.getOrganization)(countryStats, 'area', enums_1.SortDirection.descend, 3)}.`);
-  console.log(`4. Organization with the largest number of languages assigned to them is: `, `${(0, getOrganization_1.getOrganization)(countryStats, 'languages', enums_1.SortDirection.descend, 1)},`, `but with the smallest is: ${(0, getOrganization_1.getOrganization)(countryStats, 'languages', enums_1.SortDirection.ascend, 1)}.`);
-  console.log(`5. Organization using the lagest number of currencies is: `, `${(0, getOrganization_1.getOrganization)(countryStats, 'currencies', enums_1.SortDirection.descend, 1)}.`);
-  console.log(`6. Organization with the smallest number of its members is: `, `${(0, getOrganization_1.getOrganization)(countryStats, 'countries', enums_1.SortDirection.ascend, 1)}.`);
+  console.log(`1. Organization with the highest population is: `, `${(0, getOrganizationName_1.getOrganizationName)(countryStats, 'population', enums_1.SortDirection.descend, 1)}.`);
+  console.log(`2. Organization with second highest population density is: `, `${(0, getOrganizationName_1.getOrganizationName)(countryStats, 'population', enums_1.SortDirection.descend, 2)}.`);
+  console.log(`3. Organization occupying the third largest area is: `, `${(0, getOrganizationName_1.getOrganizationName)(countryStats, 'area', enums_1.SortDirection.descend, 3)}.`);
+  console.log(`4. Organization with the largest number of languages assigned to them is: `, `${(0, getOrganizationName_1.getOrganizationName)(countryStats, 'languages', enums_1.SortDirection.descend, 1)},`, `but with the smallest is: ${(0, getOrganizationName_1.getOrganizationName)(countryStats, 'languages', enums_1.SortDirection.ascend, 1)}.`);
+  console.log(`5. Organization using the lagest number of currencies is: `, `${(0, getOrganizationName_1.getOrganizationName)(countryStats, 'currencies', enums_1.SortDirection.descend, 1)}.`);
+  console.log(`6. Organization with the smallest number of its members is: `, `${(0, getOrganizationName_1.getOrganizationName)(countryStats, 'countries', enums_1.SortDirection.ascend, 1)}.`);
   console.log(`7. Native name of the language used in the largest number of countries is: `, `${(0, getLanguageName_1.getLanguageName)(countryStats, 'countries', enums_1.SortDirection.descend, 1)}.`);
   console.log(`8. Native name of the language used in the smallest number of people is: `, `${(0, getLanguageName_1.getLanguageName)(countryStats, 'population', enums_1.SortDirection.ascend, 1)}.`);
   console.log(`9. Native name of language used in the largest area is: `, `${(0, getLanguageName_1.getLanguageName)(countryStats, 'area', enums_1.SortDirection.descend, 1)},`, `but in the smallest area is: ${(0, getLanguageName_1.getLanguageName)(countryStats, 'area', enums_1.SortDirection.ascend, 1)}.`);
 };
 
 exports.printInfoWithStats = printInfoWithStats;
-},{"../types/enums":"src/types/enums.ts","../config":"src/config.ts","../utils/index":"src/utils/index.ts","../getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations":"src/getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations.ts","../getCountryStats/getCountryStats":"src/getCountryStats/getCountryStats.ts","../getOrganization/getOrganization":"src/getOrganization/getOrganization.ts","../getLanguageName/getLanguageName":"src/getLanguageName/getLanguageName.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"../types/enums":"src/types/enums.ts","../config":"src/config.ts","../utils/index":"src/utils/index.ts","../getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations":"src/getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations.ts","../getCountryStats/getCountryStats":"src/getCountryStats/getCountryStats.ts","../getOrganizationName/getOrganizationName":"src/getOrganizationName/getOrganizationName.ts","../getLanguageName/getLanguageName":"src/getLanguageName/getLanguageName.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2756,7 +2756,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61637" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63527" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

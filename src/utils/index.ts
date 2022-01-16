@@ -47,6 +47,6 @@ export const getByRegionalBlock = (countries: ICountry[], regionalBlockName: str
 };
 
 export const getByIncludingCharacter = (countryData: ICountry[], option: SortOption, character: string) => {
-  const func = (country: ICountry) => country.name.toLowerCase().includes(character.toLowerCase())
-  return countryData.filter(item => option === SortOption.excluding ? !func(item) : func(item));
+  const filterData = (country: ICountry) => country.name.toLowerCase().includes(character.toLowerCase())
+  return countryData.filter(item => option === SortOption.excluding ? !filterData(item) : filterData(item));
 };

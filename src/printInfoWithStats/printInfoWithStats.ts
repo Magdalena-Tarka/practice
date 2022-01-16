@@ -4,7 +4,7 @@ import { fiveHundredMillion } from "../config";
 import { compareAndPrintIfBigger } from '../utils/index';
 import { getSumOfFiveLargestPopulations } from "../getSumOfFiveLargestPopulations/getSumOfFiveLargestPopulations";
 import { getCountryStats } from "../getCountryStats/getCountryStats";
-import { getOrganization } from "../getOrganization/getOrganization";
+import { getOrganizationName } from "../getOrganizationName/getOrganizationName";
 import { getLanguageName } from "../getLanguageName/getLanguageName";
 
 export const printInfoWithStats = (storedCountries: IStoredCountries) => {
@@ -20,23 +20,23 @@ export const printInfoWithStats = (storedCountries: IStoredCountries) => {
   const countryStats = getCountryStats(storedCountries);
 
   console.log(`1. Organization with the highest population is: `,
-    `${getOrganization(countryStats, 'population', SortDirection.descend, 1)}.`);
+    `${getOrganizationName(countryStats, 'population', SortDirection.descend, 1)}.`);
 
   console.log(`2. Organization with second highest population density is: `,
-    `${getOrganization(countryStats, 'population', SortDirection.descend, 2)}.`);
+    `${getOrganizationName(countryStats, 'population', SortDirection.descend, 2)}.`);
 
   console.log(`3. Organization occupying the third largest area is: `,
-    `${getOrganization(countryStats, 'area', SortDirection.descend, 3)}.`);
+    `${getOrganizationName(countryStats, 'area', SortDirection.descend, 3)}.`);
 
   console.log(`4. Organization with the largest number of languages assigned to them is: `,
-    `${getOrganization(countryStats, 'languages', SortDirection.descend, 1)},`,
-    `but with the smallest is: ${getOrganization(countryStats, 'languages', SortDirection.ascend, 1)}.`);
+    `${getOrganizationName(countryStats, 'languages', SortDirection.descend, 1)},`,
+    `but with the smallest is: ${getOrganizationName(countryStats, 'languages', SortDirection.ascend, 1)}.`);
 
   console.log(`5. Organization using the lagest number of currencies is: `,
-    `${getOrganization(countryStats, 'currencies', SortDirection.descend, 1)}.`);
+    `${getOrganizationName(countryStats, 'currencies', SortDirection.descend, 1)}.`);
 
   console.log(`6. Organization with the smallest number of its members is: `,
-    `${getOrganization(countryStats, 'countries', SortDirection.ascend, 1)}.`);
+    `${getOrganizationName(countryStats, 'countries', SortDirection.ascend, 1)}.`);
 
   console.log(`7. Native name of the language used in the largest number of countries is: `,
     `${getLanguageName(countryStats, 'countries', SortDirection.descend, 1)}.`);

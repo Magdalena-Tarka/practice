@@ -2,7 +2,7 @@ import { ICountryStats, IOrgStatsSchema, IOrgToSort } from "../types/interfaces"
 import { SortDirection } from "../types/enums";
 import { getSortedValue } from "../utils";
 
-export const getOrganization = (
+export const getOrganizationName = (
   countryStats: ICountryStats,
   keyToSortOrg: keyof IOrgStatsSchema,
   direction: SortDirection,
