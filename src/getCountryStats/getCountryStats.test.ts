@@ -1,5 +1,5 @@
 import { mockStoredData, mockCountryStats } from '../mockData';
-import { getCountryStats } from './getCountryStats';
+import { getCountryStats } from '.';
 
 describe('Fumction getCountryStats', () => {
   it('should return object with stats', () => {

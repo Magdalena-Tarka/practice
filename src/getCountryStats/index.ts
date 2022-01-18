@@ -1,5 +1,5 @@
 import { ICountry, IStoredCountries, ICountryStats } from "../types/interfaces";
-import { segregateByBlockIntoStats } from '../segregateByBlockIntoStats/segregateByBlockIntoStats';
+import { segregateByBlockIntoStats } from './segregateByBlockIntoStats';
 import { keysToGetStatsBy } from '../config';
 
 export const getCountryStats = (storedCountries: IStoredCountries) => {

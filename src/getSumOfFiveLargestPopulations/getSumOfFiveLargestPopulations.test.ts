@@ -1,5 +1,5 @@
 import { mockStoredData } from '../mockData';
-import { getSumOfFiveLargestPopulations } from './getSumOfFiveLargestPopulations';
+import { getSumOfFiveLargestPopulations } from '.';
 
 describe('Fumction getSumOfFiveLargestPopulations', () => {
   it('should return 222', () => {

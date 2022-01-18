@@ -1,15 +1,15 @@
-import { ICountryStats, IOrgStatsSchema, IOrgToSort } from "../types/interfaces";
-import { SortDirection } from "../types/enums";
-import { getSortedValue } from "../utils";
+import { ICountryStats, IOrgStatsSchema, IOrgToSort } from "../../types/interfaces";
+import { SortDirection } from "../../types/enums";
+import { getSortedByKey } from "../../utils";
 
-export const getOrganizationName = (
+export const getOrgsSortedList = (
   countryStats: ICountryStats,
   keyToSortOrg: keyof IOrgStatsSchema,
-  direction: SortDirection,
-  position: number
+  direction: SortDirection = SortDirection.descend,
 ) => {
 
   const orgsToSort: IOrgToSort[] = [];
+  const keyToSort = 'value';
 
   Object.keys(countryStats).forEach(key => {
     if(key !== 'other') {
@@ -25,5 +25,5 @@ export const getOrganizationName = (
     }
   });
 
-  return getSortedValue((orgsToSort), direction)[position - 1].orgName;
+  return getSortedByKey(orgsToSort, keyToSort, direction);
 };

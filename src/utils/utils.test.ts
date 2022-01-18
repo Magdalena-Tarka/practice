@@ -6,7 +6,6 @@ import {
   getByRegionalBlock,
   getByIncludingCharacter,
   getSortedByKey,
-  getSortedValue,
   getUniqueListBy,
   compareAndPrintIfBigger,
   sumPopulation
@@ -82,7 +81,7 @@ describe("Function getByIncludingCharacter", () => {
   });
 });
 
-describe("Function getSortedValue", () => {
+/*describe("Function getSortedValue", () => {
   const sortValue = (arr1: any, direction: SortDirection) => getSortedValue(arr1, direction);
 
   it("should return 192", () => {
@@ -92,7 +91,7 @@ describe("Function getSortedValue", () => {
   it("should return 971", () => {
     expect(sortValue(mockValuesArray, SortDirection.descend)[0].value).toBe(971);
   });
-});
+});*/
 
 describe("Function getUniqueListBy", () => {
   const removeDuplicates = (collection: ICurrency[], keyToCompare: keyof ICurrency) => getUniqueListBy(collection, keyToCompare);

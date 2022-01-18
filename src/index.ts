@@ -1,6 +1,6 @@
 import { IStoredCountries } from "./types/interfaces";
-import { handleData } from "./handleData/handleData";
-import { printInfoWithStats } from "./printInfoWithStats/printInfoWithStats";
+import { handleData } from "./handleData";
+import { printInfoWithStats } from "./printInfoWithStats";
 
 const app = () => {
 

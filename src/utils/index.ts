@@ -20,8 +20,8 @@ export const compareAndPrintIfBigger = (number1: number, number2: number) => {
   return (number1 > number2) ? 'bigger than' : 'not bigger than';
 };
 
-export const getSortedByKey = (countriesToSort: ICountry[], keyToSort: string, direction: SortDirection) => {
-  return countriesToSort.slice().sort((a: any, b: any) => {
+export const getSortedByKey = (collection: any, keyToSort: string, direction: SortDirection) => {
+  return collection.slice().sort((a: any, b: any) => {
     if (a[keyToSort] === b[keyToSort]) {
       return 0
     }
@@ -30,15 +30,15 @@ export const getSortedByKey = (countriesToSort: ICountry[], keyToSort: string, d
     }
     return a[keyToSort] > b[keyToSort] ? -1 : 1;
   });
-}
-
-export const getSortedValue = (arr: any, direction: SortDirection) => {
-  return arr.sort((a: any, b: any) => direction === SortDirection.ascend ? a.value - b.value : b.value - a.value);
 };
 
 export const getUniqueListBy = (collection: ICurrency[], keyToCompare: keyof ICurrency) => {
   return [...new Map(collection.map((item: any) => [item[keyToCompare], item])).values()]
-}
+};
+
+export const getNameOfObjectByPosition = (arr: any, name: string, position: number = 1) => {
+  return arr[position - 1][name];
+};
 
 // FILTERS
 

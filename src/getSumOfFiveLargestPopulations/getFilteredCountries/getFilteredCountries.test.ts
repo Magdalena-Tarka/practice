@@ -1,5 +1,5 @@
-import { mockCountries } from '../mockData';
-import { getFilteredCountries } from './getFilteredCountries';
+import { mockCountries } from '../../mockData';
+import { getFilteredCountries } from '.';
 
 describe('Fumction getFilteredCountries', () => {
   it('should return correct result', () => {
