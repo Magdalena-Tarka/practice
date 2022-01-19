@@ -40,6 +40,11 @@ export const getNameOfObjectByPosition = (arr: any, name: string, position: numb
   return arr[position - 1][name];
 };
 
+export const printChangedData = (changedData: string) => {
+  if (!changedData.length) return console.log('None of the countries has been changed.');
+  return console.log(`Countries which population has changed: ${changedData}.`);
+}
+
 // FILTERS
 
 export const getByRegionalBlock = (countries: ICountry[], regionalBlockName: string) => {

@@ -158,7 +158,7 @@ var SortOption;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getByIncludingCharacter = exports.getByRegionalBlock = exports.getNameOfObjectByPosition = exports.getUniqueListBy = exports.getSortedByKey = exports.compareAndPrintIfBigger = exports.sumPopulation = exports.getChangedPopulationCountries = void 0;
+exports.getByIncludingCharacter = exports.getByRegionalBlock = exports.printChangedData = exports.getNameOfObjectByPosition = exports.getUniqueListBy = exports.getSortedByKey = exports.compareAndPrintIfBigger = exports.sumPopulation = exports.getChangedPopulationCountries = void 0;
 
 const enums_1 = require("../types/enums");
 
@@ -212,7 +212,14 @@ const getNameOfObjectByPosition = function (arr, name) {
   return arr[position - 1][name];
 };
 
-exports.getNameOfObjectByPosition = getNameOfObjectByPosition; // FILTERS
+exports.getNameOfObjectByPosition = getNameOfObjectByPosition;
+
+const printChangedData = changedData => {
+  if (!changedData.length) return console.log('None of the countries has been changed.');
+  return console.log(`Countries which population has changed: ${changedData}.`);
+};
+
+exports.printChangedData = printChangedData; // FILTERS
 
 const getByRegionalBlock = (countries, regionalBlockName) => {
   return countries.filter(country => {
@@ -2383,7 +2390,7 @@ const getCountriesData = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 
 exports.getCountriesData = getCountriesData;
-},{"axios":"node_modules/axios/index.js","./config":"src/config.ts"}],"src/handleData/uploadDataInLocalStorage.ts":[function(require,module,exports) {
+},{"axios":"node_modules/axios/index.js","./config":"src/config.ts"}],"src/downloadOrUpdateData/saveAndCheckDataInLS.ts":[function(require,module,exports) {
 "use strict";
 
 var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
@@ -2421,67 +2428,67 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.uploadDataInLocalStorage = void 0;
+exports.saveAndCheckDataInLS = void 0;
 
-const index_1 = require("../utils/index");
+const utils_1 = require("../utils");
 
 const api_1 = require("../api");
 
-const uploadDataInLocalStorage = countries => __awaiter(void 0, void 0, void 0, function* () {
-  const result = {
-    data: yield (0, api_1.getCountriesData)(),
-    timestamp: new Date().getTime()
-  };
+const saveAndCheckDataInLS = countriesDataInLS => __awaiter(void 0, void 0, void 0, function* () {
+  const saveDataInLS = arg => localStorage.setItem("storedCountries", JSON.stringify(arg));
 
-  if (countries) {
-    const uploadedCountries = yield (0, api_1.getCountriesData)();
-    const changedPopulationCountries = (0, index_1.getChangedPopulationCountries)(countries, uploadedCountries);
-    result.data = uploadedCountries;
-
-    if (!changedPopulationCountries.length) {
-      console.log("None of the countries has been changed.");
-    } else {
-      console.log(`Countries which population has changed: ${changedPopulationCountries}.`);
-    }
+  if (countriesDataInLS) {
+    const updatedCountries = yield (0, api_1.getCountriesData)();
+    const changedPopulationCountries = (0, utils_1.getChangedPopulationCountries)(countriesDataInLS, updatedCountries);
+    const result = {
+      data: updatedCountries,
+      timestamp: new Date().getTime()
+    };
+    (0, utils_1.printChangedData)(changedPopulationCountries);
+    saveDataInLS(result);
+  } else {
+    const result = {
+      data: yield (0, api_1.getCountriesData)(),
+      timestamp: new Date().getTime()
+    };
+    saveDataInLS(result);
   }
-
-  localStorage.setItem("storedCountries", JSON.stringify(result));
 });
 
-exports.uploadDataInLocalStorage = uploadDataInLocalStorage;
-},{"../utils/index":"src/utils/index.ts","../api":"src/api.ts"}],"src/handleData/index.ts":[function(require,module,exports) {
+exports.saveAndCheckDataInLS = saveAndCheckDataInLS;
+},{"../utils":"src/utils/index.ts","../api":"src/api.ts"}],"src/downloadOrUpdateData/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.handleData = void 0;
+exports.downloadOrUpdateData = void 0;
 
 const config_1 = require("../config");
 
-const uploadDataInLocalStorage_1 = require("./uploadDataInLocalStorage");
+const saveAndCheckDataInLS_1 = require("./saveAndCheckDataInLS");
 
-const handleData = _ref => {
+const downloadOrUpdateData = _ref => {
   let {
-    data: countries,
-    timestamp: uploadDate
+    data: countriesDataInLS,
+    timestamp: updateDate
   } = _ref;
   const now = new Date().getTime();
-  const timeElapsed = now - uploadDate;
+  const timeElapsed = now - updateDate;
 
-  if (!countries) {
-    (0, uploadDataInLocalStorage_1.uploadDataInLocalStorage)();
-    console.log("Data in Local Store has been saved successfully!");
+  if (!countriesDataInLS) {
+    (0, saveAndCheckDataInLS_1.saveAndCheckDataInLS)();
+    console.log("Data in Local Store has been downloaded successfully!");
   }
 
   if (timeElapsed >= config_1.sevenDaysInMsc) {
-    (0, uploadDataInLocalStorage_1.uploadDataInLocalStorage)(countries);
+    (0, saveAndCheckDataInLS_1.saveAndCheckDataInLS)(countriesDataInLS);
     console.log("Data in Local Store has been updated successfully!");
   }
 };
 
-exports.handleData = handleData;
-},{"../config":"src/config.ts","./uploadDataInLocalStorage":"src/handleData/uploadDataInLocalStorage.ts"}],"src/getSumOfFiveLargestPopulations/getFilteredCountries/index.ts":[function(require,module,exports) {
+exports.downloadOrUpdateData = downloadOrUpdateData;
+},{"../config":"src/config.ts","./saveAndCheckDataInLS":"src/downloadOrUpdateData/saveAndCheckDataInLS.ts"}],"src/getSumOfFiveLargestPopulations/getFilteredCountries/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2753,20 +2760,20 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-const handleData_1 = require("./handleData");
+const downloadOrUpdateData_1 = require("./downloadOrUpdateData");
 
 const printInfoWithStats_1 = require("./printInfoWithStats");
 
 const app = () => {
   // Init data - get the data from Local Storage, update the data in Local Storage if 7 days has been passed since the last update.
   const storedCountries = JSON.parse(localStorage.getItem("storedCountries") || "{}");
-  (0, handleData_1.handleData)(storedCountries); // Prit statistics.
+  (0, downloadOrUpdateData_1.downloadOrUpdateData)(storedCountries); // Prit statistics.
 
   (0, printInfoWithStats_1.printInfoWithStats)(storedCountries);
 };
 
 app();
-},{"./handleData":"src/handleData/index.ts","./printInfoWithStats":"src/printInfoWithStats/index.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./downloadOrUpdateData":"src/downloadOrUpdateData/index.ts","./printInfoWithStats":"src/printInfoWithStats/index.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2794,7 +2801,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56844" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54986" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -57,6 +57,14 @@ ${'area'}    | ${SortDirection.descend} | ${'Nicaragua'}
   expect(getSortedByKey(mockCountries, keyToSort, direction)[0].name).toBe(expected);
 });
 
+test.each`
+keyToSort     | direction                | expected
+${'value'}    | ${SortDirection.ascend}  | ${192}
+${'value'}    | ${SortDirection.descend} | ${971}
+`(`should return countries array sorted correctly by given params`, ({keyToSort, direction, expected}) => {
+  expect(getSortedByKey(mockValuesArray, keyToSort, direction)[0].value).toBe(expected);
+});
+
 describe("Function getByRegionalBlock", () => {
   const AUCountries = (array: ICountry[]) => getByRegionalBlock(array, 'African Union');
 
@@ -80,18 +88,6 @@ describe("Function getByIncludingCharacter", () => {
     expect(countriesExcludingL(mockCountries).every(country => !country.name.includes('l'))).toBe(true);
   });
 });
-
-/*describe("Function getSortedValue", () => {
-  const sortValue = (arr1: any, direction: SortDirection) => getSortedValue(arr1, direction);
-
-  it("should return 192", () => {
-    expect(sortValue(mockValuesArray, SortDirection.ascend)[0].value).toBe(192);
-  });
-
-  it("should return 971", () => {
-    expect(sortValue(mockValuesArray, SortDirection.descend)[0].value).toBe(971);
-  });
-});*/
 
 describe("Function getUniqueListBy", () => {
   const removeDuplicates = (collection: ICurrency[], keyToCompare: keyof ICurrency) => getUniqueListBy(collection, keyToCompare);

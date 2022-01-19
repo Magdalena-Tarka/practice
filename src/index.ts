@@ -1,5 +1,5 @@
 import { IStoredCountries } from "./types/interfaces";
-import { handleData } from "./handleData";
+import { downloadOrUpdateData } from "./downloadOrUpdateData";
 import { printInfoWithStats } from "./printInfoWithStats";
 
 const app = () => {
@@ -10,7 +10,7 @@ const app = () => {
     localStorage.getItem("storedCountries") || "{}"
   );
 
-  handleData(storedCountries);
+  downloadOrUpdateData(storedCountries);
 
   // Prit statistics.
 
