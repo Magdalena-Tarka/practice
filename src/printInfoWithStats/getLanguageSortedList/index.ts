@@ -6,7 +6,7 @@ export const getLanguageSortedList = (
   countryStats: ICountryStats,
   keyToSortLang: keyof ILanguageStatsShort,
   direction: SortDirection = SortDirection.descend,
-) => {
+): IlanguageToSort[] => {
 
   const languagesToSort: IlanguageToSort[] = [];
   const keyToSort = 'value';

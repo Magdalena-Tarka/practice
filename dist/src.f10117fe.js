@@ -232,7 +232,7 @@ const getByRegionalBlock = (countries, regionalBlockName) => {
 exports.getByRegionalBlock = getByRegionalBlock;
 
 const getByIncludingCharacter = (countryData, option, character) => {
-  const filterData = country => country.name.toLowerCase().includes(character.toLowerCase());
+  const filterData = country => country.name.toLowerCase().includes(character);
 
   return countryData.filter(item => option === enums_1.SortOption.excluding ? !filterData(item) : filterData(item));
 };
@@ -2390,7 +2390,7 @@ const getCountriesData = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 
 exports.getCountriesData = getCountriesData;
-},{"axios":"node_modules/axios/index.js","./config":"src/config.ts"}],"src/downloadOrUpdateData/saveAndCheckDataInLS.ts":[function(require,module,exports) {
+},{"axios":"node_modules/axios/index.js","./config":"src/config.ts"}],"src/downloadOrUpdateData/index.ts":[function(require,module,exports) {
 "use strict";
 
 var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
@@ -2428,67 +2428,49 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.saveAndCheckDataInLS = void 0;
-
-const utils_1 = require("../utils");
-
-const api_1 = require("../api");
-
-const saveAndCheckDataInLS = countriesDataInLS => __awaiter(void 0, void 0, void 0, function* () {
-  const saveDataInLS = arg => localStorage.setItem("storedCountries", JSON.stringify(arg));
-
-  if (countriesDataInLS) {
-    const updatedCountries = yield (0, api_1.getCountriesData)();
-    const changedPopulationCountries = (0, utils_1.getChangedPopulationCountries)(countriesDataInLS, updatedCountries);
-    const result = {
-      data: updatedCountries,
-      timestamp: new Date().getTime()
-    };
-    (0, utils_1.printChangedData)(changedPopulationCountries);
-    saveDataInLS(result);
-  } else {
-    const result = {
-      data: yield (0, api_1.getCountriesData)(),
-      timestamp: new Date().getTime()
-    };
-    saveDataInLS(result);
-  }
-});
-
-exports.saveAndCheckDataInLS = saveAndCheckDataInLS;
-},{"../utils":"src/utils/index.ts","../api":"src/api.ts"}],"src/downloadOrUpdateData/index.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 exports.downloadOrUpdateData = void 0;
 
 const config_1 = require("../config");
 
-const saveAndCheckDataInLS_1 = require("./saveAndCheckDataInLS");
+const utils_1 = require("../utils");
+
+const api_1 = require("../api");
 
 const downloadOrUpdateData = _ref => {
   let {
     data: countriesDataInLS,
     timestamp: updateDate
   } = _ref;
-  const now = new Date().getTime();
-  const timeElapsed = now - updateDate;
+  return __awaiter(void 0, void 0, void 0, function* () {
+    const now = new Date().getTime();
+    const timeElapsed = now - updateDate;
+    const countriesData = yield (0, api_1.getCountriesData)();
+    const timestamp = new Date().getTime();
 
-  if (!countriesDataInLS) {
-    (0, saveAndCheckDataInLS_1.saveAndCheckDataInLS)();
-    console.log("Data in Local Store has been downloaded successfully!");
-  }
+    const saveDataInLS = arg => localStorage.setItem("storedCountries", JSON.stringify(arg));
 
-  if (timeElapsed >= config_1.sevenDaysInMsc) {
-    (0, saveAndCheckDataInLS_1.saveAndCheckDataInLS)(countriesDataInLS);
-    console.log("Data in Local Store has been updated successfully!");
-  }
+    if (!countriesDataInLS) {
+      saveDataInLS({
+        data: countriesData,
+        timestamp
+      });
+      console.log("Data in Local Store has been downloaded successfully!");
+    } else {
+      if (timeElapsed >= config_1.sevenDaysInMsc) {
+        const changedPopulationCountries = (0, utils_1.getChangedPopulationCountries)(countriesDataInLS, countriesData);
+        (0, utils_1.printChangedData)(changedPopulationCountries);
+        saveDataInLS({
+          data: countriesData,
+          timestamp
+        });
+        console.log("Data in Local Store has been updated successfully!");
+      }
+    }
+  });
 };
 
 exports.downloadOrUpdateData = downloadOrUpdateData;
-},{"../config":"src/config.ts","./saveAndCheckDataInLS":"src/downloadOrUpdateData/saveAndCheckDataInLS.ts"}],"src/getSumOfFiveLargestPopulations/getFilteredCountries/index.ts":[function(require,module,exports) {
+},{"../config":"src/config.ts","../utils":"src/utils/index.ts","../api":"src/api.ts"}],"src/getSumOfFiveLargestPopulations/getFilteredCountries/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2503,7 +2485,7 @@ const index_1 = require("../../utils/index");
 const getFilteredCountries = countriesToFilter => {
   const regionalBlock = 'EU';
   const character = 'A';
-  return (0, index_1.getByIncludingCharacter)((0, index_1.getByRegionalBlock)(countriesToFilter, regionalBlock), enums_1.SortOption.excluding, character);
+  return (0, index_1.getByIncludingCharacter)((0, index_1.getByRegionalBlock)(countriesToFilter, regionalBlock), enums_1.SortOption.excluding, character.toLowerCase());
 };
 
 exports.getFilteredCountries = getFilteredCountries;
@@ -2801,7 +2783,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54986" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54602" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

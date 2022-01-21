@@ -6,7 +6,7 @@ export const getOrgsSortedList = (
   countryStats: ICountryStats,
   keyToSortOrg: keyof IOrgStatsSchema,
   direction: SortDirection = SortDirection.descend,
-) => {
+): IOrgToSort[] => {
 
   const orgsToSort: IOrgToSort[] = [];
   const keyToSort = 'value';

@@ -1,4 +1,4 @@
-import { ICountry, ICurrency } from "../types/interfaces";
+import { ICountry, ICurrency, IOrgToSort, ILanguageStatsShort } from "../types/interfaces";
 import { SortDirection, SortOption } from "../types/enums";
 
 export const getChangedPopulationCountries = (arr1: ICountry[], arr2: ICountry[]) => {
@@ -32,11 +32,11 @@ export const getSortedByKey = (collection: any, keyToSort: string, direction: So
   });
 };
 
-export const getUniqueListBy = (collection: ICurrency[], keyToCompare: keyof ICurrency) => {
+export const getUniqueListBy = (collection: ICurrency[], keyToCompare: keyof ICurrency): ICurrency[] => {
   return [...new Map(collection.map((item: any) => [item[keyToCompare], item])).values()]
 };
 
-export const getNameOfObjectByPosition = (arr: any, name: string, position: number = 1) => {
+export const getNameOfObjectByPosition = (arr: any, name: string, position: number = 1): string => {
   return arr[position - 1][name];
 };
 
@@ -52,6 +52,6 @@ export const getByRegionalBlock = (countries: ICountry[], regionalBlockName: str
 };
 
 export const getByIncludingCharacter = (countryData: ICountry[], option: SortOption, character: string) => {
-  const filterData = (country: ICountry) => country.name.toLowerCase().includes(character.toLowerCase())
+  const filterData = (country: ICountry) => country.name.toLowerCase().includes(character)
   return countryData.filter(item => option === SortOption.excluding ? !filterData(item) : filterData(item));
 };
