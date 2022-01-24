@@ -2681,7 +2681,104 @@ const getLanguageSortedList = function (countryStats, keyToSortLang) {
 };
 
 exports.getLanguageSortedList = getLanguageSortedList;
-},{"../../types/enums":"src/types/enums.ts","../../utils":"src/utils/index.ts"}],"src/printInfoWithStats/index.ts":[function(require,module,exports) {
+},{"../../types/enums":"src/types/enums.ts","../../utils":"src/utils/index.ts"}],"src/utils/index2.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.functionsObject = void 0;
+
+const enums_1 = require("../types/enums");
+
+;
+exports.functionsObject = {
+  resultArray: [],
+  resultNumber: 0,
+  resultString: '',
+  getByRegionalBlock: function (regionalBlockName) {
+    this.resultArray = this.resultArray.filter(country => {
+      var _a;
+
+      return (_a = country.regionalBlocs) === null || _a === void 0 ? void 0 : _a.some(element => element.acronym === regionalBlockName);
+    });
+    return this;
+  },
+  getByIncludingCharacter: function (option, character) {
+    const filterData = country => country.name.toLowerCase().includes(character);
+
+    this.resultArray = this.resultArray.filter(item => option === enums_1.SortOption.excluding ? !filterData(item) : filterData(item));
+    return this;
+  },
+  getSortedByKey: function (keyToSort, direction) {
+    this.resultArray = this.resultArray.slice().sort((a, b) => {
+      if (a[keyToSort] === b[keyToSort]) {
+        return 0;
+      }
+
+      if (direction === enums_1.SortDirection.ascend) {
+        return a[keyToSort] > b[keyToSort] ? 1 : -1;
+      }
+
+      return a[keyToSort] > b[keyToSort] ? -1 : 1;
+    });
+    return this;
+  },
+  getUniqueListBy: function (keyToCompare) {
+    this.resultArray = [...new Map(this.resultArray.map(item => [item[keyToCompare], item])).values()];
+    return this;
+  },
+  sumPopulation: function (quantityToSum) {
+    const slicedData = quantityToSum ? this.resultArray.slice(0, quantityToSum) : this.resultArray;
+    this.resultNumber = slicedData.reduce((prev, cur) => prev + cur.population, 0);
+    return this;
+  },
+  getChangedPopulationCountries: function (arr2) {
+    const arr1 = this.resultArray;
+    this.resultString = arr1.filter(country1 => !arr2.some(country2 => country1.population === country2.population)).map(item => item.name).join(", ");
+    return this;
+  }
+};
+/*export const compareAndPrintIfBigger = (number1: number, number2: number) => {
+  if (number1 === number2) {
+    return 'equal with';
+  }
+  return (number1 > number2) ? 'bigger than' : 'not bigger than';
+};
+
+export const getNameOfObjectByPosition = (arr: any, name: string, position: number = 1): string => {
+  return arr[position - 1][name];
+};
+
+export const printChangedData = (changedData: string) => {
+  if (!changedData.length) return console.log('None of the countries has been changed.');
+  return console.log(`Countries which population has changed: ${changedData}.`);
+};*/
+},{"../types/enums":"src/types/enums.ts"}],"src/getSumOfFiveLargestPopulations/getChainedSum.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getChainedSum = void 0;
+
+const enums_1 = require("../types/enums");
+
+const index2_1 = require("../utils/index2");
+
+const getChainedSum = storedCountries => {
+  const countries = storedCountries.data;
+  const regionalBlock = 'EU';
+  const character = 'A';
+  const sortKey = 'population';
+  const countriesQuantity = 5;
+  index2_1.functionsObject.resultArray = countries;
+  return index2_1.functionsObject.getByRegionalBlock(regionalBlock).getByIncludingCharacter(enums_1.SortOption.excluding, character.toLowerCase()).getSortedByKey(sortKey, enums_1.SortDirection.descend).sumPopulation(countriesQuantity);
+  ;
+};
+
+exports.getChainedSum = getChainedSum;
+},{"../types/enums":"src/types/enums.ts","../utils/index2":"src/utils/index2.ts"}],"src/printInfoWithStats/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2703,8 +2800,13 @@ const getOrgsSortedList_1 = require("./getOrgsSortedList");
 
 const getLanguageSortedList_1 = require("./getLanguageSortedList");
 
+const getChainedSum_1 = require("../getSumOfFiveLargestPopulations/getChainedSum");
+
 const printInfoWithStats = storedCountries => {
-  // Get summary of 5 largest population of filtred (UE countries, name not included character A) countries. Compare it with 500 million.
+  // Testing function chaining :)
+  const sumOfFiltredCountries = (0, getChainedSum_1.getChainedSum)(storedCountries).resultNumber;
+  console.log(`Summary of the five largest population of filtered countries GOT FROM FUNCTION CHAINING is: ${sumOfFiltredCountries}`); // Get summary of 5 largest population of filtred (UE countries, name not included character A) countries. Compare it with 500 million.
+
   const sumOfFiveLargestPopulation = (0, getSumOfFiveLargestPopulations_1.getSumOfFiveLargestPopulations)(storedCountries);
   const template = (0, index_1.compareAndPrintIfBigger)(sumOfFiveLargestPopulation, config_1.fiveHundredMillion);
   console.log(`Summary of the five largest population of filtered countries is ${sumOfFiveLargestPopulation}.`, // 44531245
@@ -2735,7 +2837,7 @@ const printInfoWithStats = storedCountries => {
 };
 
 exports.printInfoWithStats = printInfoWithStats;
-},{"../types/enums":"src/types/enums.ts","../config":"src/config.ts","../utils/index":"src/utils/index.ts","../getSumOfFiveLargestPopulations":"src/getSumOfFiveLargestPopulations/index.ts","../getCountryStats":"src/getCountryStats/index.ts","./getOrgsSortedList":"src/printInfoWithStats/getOrgsSortedList/index.ts","./getLanguageSortedList":"src/printInfoWithStats/getLanguageSortedList/index.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"../types/enums":"src/types/enums.ts","../config":"src/config.ts","../utils/index":"src/utils/index.ts","../getSumOfFiveLargestPopulations":"src/getSumOfFiveLargestPopulations/index.ts","../getCountryStats":"src/getCountryStats/index.ts","./getOrgsSortedList":"src/printInfoWithStats/getOrgsSortedList/index.ts","./getLanguageSortedList":"src/printInfoWithStats/getLanguageSortedList/index.ts","../getSumOfFiveLargestPopulations/getChainedSum":"src/getSumOfFiveLargestPopulations/getChainedSum.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2783,7 +2885,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54602" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53477" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

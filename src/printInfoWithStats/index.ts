@@ -6,8 +6,13 @@ import { getSumOfFiveLargestPopulations } from "../getSumOfFiveLargestPopulation
 import { getCountryStats } from "../getCountryStats";
 import { getOrgsSortedList } from "./getOrgsSortedList";
 import { getLanguageSortedList } from "./getLanguageSortedList";
+import { getChainedSum } from "../getSumOfFiveLargestPopulations/getChainedSum";
 
 export const printInfoWithStats = (storedCountries: IStoredCountries) => {
+
+  // Testing function chaining :)
+  const sumOfFiltredCountries = getChainedSum(storedCountries).resultNumber;
+  console.log(`Summary of the five largest population of filtered countries GOT FROM FUNCTION CHAINING is: ${sumOfFiltredCountries}`);
 
   // Get summary of 5 largest population of filtred (UE countries, name not included character A) countries. Compare it with 500 million.
   const sumOfFiveLargestPopulation = getSumOfFiveLargestPopulations(storedCountries);
